@@ -2,11 +2,14 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
+import { FiSend } from "react-icons/fi";
+import { FiCopy } from "react-icons/fi"; // Add an icon for copy
 
 function App() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [generatingAnswer, setGeneratingAnswer] = useState(false);
+  const [hasCode, setHasCode] = useState(false); // New state to track if answer contains code
 
   useEffect(() => {
     if (answer) {
@@ -14,12 +17,17 @@ function App() {
         behavior: "smooth",
       });
     }
+
+    // Check if the answer contains code blocks
+    setHasCode(answer.includes("```"));
   }, [answer]);
 
   async function generateAnswer(e) {
     e.preventDefault();
     setGeneratingAnswer(true);
     setAnswer("");
+    setQuestion(""); // Clear the input bar after form submission
+
     let loadingText = "Loading your answer";
     setAnswer(loadingText);
 
@@ -45,15 +53,28 @@ function App() {
       });
 
       clearInterval(typingInterval);
-      setAnswer(
-        response["data"]["candidates"][0]["content"]["parts"][0]["text"]
-      );
+      const responseText =
+        response["data"]["candidates"][0]["content"]["parts"][0]["text"];
+      setAnswer(responseText);
+      setHasCode(responseText.includes("```")); // Set hasCode based on response content
     } catch (error) {
       clearInterval(typingInterval);
       setAnswer("Sorry - Something went wrong. Please try again!");
     } finally {
       setGeneratingAnswer(false);
     }
+  }
+
+  // Function to copy the answer content to clipboard
+  function copyToClipboard() {
+    navigator.clipboard
+      .writeText(answer)
+      .then(() => {
+        alert("Code copied to clipboard!");
+      })
+      .catch(() => {
+        alert("Failed to copy!");
+      });
   }
 
   return (
@@ -69,29 +90,37 @@ function App() {
             Chat AI
           </h1>
         </a>
-        <textarea
-          required
-          className="w-full p-4 my-2 transition-all border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          placeholder="Ask anything..."
-        ></textarea>
-        <button
-          type="submit"
-          className={`w-full mt-4 bg-gradient-to-r from-purple-500 to-indigo-500 text-white p-3 rounded-lg font-bold shadow-md hover:bg-gradient-to-r hover:from-purple-600 hover:to-indigo-600 transition-all duration-300 ${
-            generatingAnswer ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          disabled={generatingAnswer}
-        >
-          {generatingAnswer ? "Generating..." : "Generate Answer"}
-        </button>
+        <div className="relative w-full flex items-center my-2">
+          <textarea
+            required
+            className="w-full p-4 transition-all border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+            style={{ backgroundColor: "#1a1a1a", color: "#fff" }}
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            placeholder="Ask anything..."
+            disabled={generatingAnswer} // Disable input when generating answer
+          ></textarea>
+          <button
+            type="submit"
+            className="absolute right-2 bottom-2 text-purple-500 hover:text-purple-700 transition-all duration-300"
+            disabled={generatingAnswer} // Disable button when generating answer
+          >
+            <FiSend size={24} />
+          </button>
+        </div>
       </form>
 
       <div id="answer-container" className="answer-container">
-        <ReactMarkdown className="prose text-left text-gray-800">{answer}</ReactMarkdown>
+        <ReactMarkdown className="prose text-left">{answer}</ReactMarkdown>
+
+        {/* Show Copy Button only if code is detected */}
+        {hasCode && (
+          <button onClick={copyToClipboard} className="copy-button">
+            <FiCopy /> Copy Code
+          </button>
+        )}
       </div>
 
-      {/* Footer with Copyright */}
       <footer className="footer">
         <p>© 2024 Pankaj Suman. All rights reserved.</p>
       </footer>

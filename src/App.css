@@ -1,29 +1,86 @@
-body {
-  background-image: url('https://img.freepik.com/free-photo/3d-rendering-futuristic-computer_23-2151004382.jpg'); /* Update with your image URL */
-  background-size: cover;
-  background-position: center;
-  margin: 0;
-  font-family: Arial, sans-serif;
-}
-
+/* Main container styles */
 .main-container {
-  max-width: 600px;
-  margin: auto;
+  background-color: #000;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: 20px;
-  background-color: rgba(255, 255, 255, 0.8); /* Optional: background color for readability */
-  border-radius: 10px;
 }
 
-h1 {
-  margin-bottom: 20px;
+.form-container {
+  width: 100%;
+  max-width: 600px;
 }
 
-.footer {
-  text-align: center;
+.input-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
+
+.textarea {
+  flex: 1;
+  padding: 1rem;
+  border: 1px solid #333;
+  border-radius: 0.5rem;
+  resize: none;
+  outline: none;
+}
+
+.send-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: #6a0dad;
+  margin-left: 10px;
+  transition: color 0.3s ease;
+}
+
+.send-button.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.send-button:hover {
+  color: #8a2be2;
+}
+
+/* Answer container */
+.answer-container {
+  color: #fff;
+  background-color: #1a1a1a;
+  padding: 10px;
+  border-radius: 8px;
   margin-top: 20px;
+  position: relative;
+}
+
+/* Copy Button */
+.copy-button {
+  background-color: #6a0dad;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
   font-size: 0.9rem;
-  color: #333;
-  padding: 10px; /* Add some padding for better spacing */
-  background-color: rgba(255, 255, 255, 0.8); /* Match footer background with main container */
-  border-radius: 10px; /* Rounded corners */
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.copy-button:hover {
+  background-color: #8a2be2;
+}
+
+/* Footer */
+.footer {
+  color: #fff;
+  margin-top: 20px;
+  text-align: center;
 }
